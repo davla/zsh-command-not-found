@@ -1,0 +1,25 @@
+#!/usr/bin/env zsh
+
+typeset -g ZSH_COMMAND_NOT_FOUND_CHECK_EXEC=${ZSH_COMMAND_NOT_FOUND_CHECK_EXEC-false}
+
+${ZSH_COMMAND_NOT_FOUND_OPTIONS-false} || typeset -ag ZSH_COMMAND_NOT_FOUND_OPTIONS=()
+
+${ZSH_COMMAND_NOT_FOUND_NO_FAILURE_MSG:-true} \
+    && ZSH_COMMAND_NOT_FOUND_OPTIONS+=('--no-failure-msg')
+${ZSH_COMMAND_NOT_FOUND_IGNORE_INSTALLED:-true} \
+    && ZSH_COMMAND_NOT_FOUND_OPTIONS+=('--ignore-installed')
+$ZSH_COMMAND_NOT_FOUND_DATA_DIR \
+    && ZSH_COMMAND_NOT_FOUND_OPTIONS+=('-d' "$ZSH_COMMAND_NOT_FOUND_DATA_DIR")
+
+if $ZSH_COMMAND_NOT_FOUND_CHECK_EXEC; then
+    which &> /dev/null command-not-found \
+        && command_not_found_handler() {
+            which &> /dev/null command-not-found \
+                && command-not-found ${ZSH_COMMAND_NOT_FOUND_OPTIONS[@]} \
+                    -- ${1+"$1"}
+        }
+else
+    command_not_found_handler() {
+        command-not-found ${ZSH_COMMAND_NOT_FOUND_OPTIONS[@]} -- ${1+"$1"}
+    }
+fi
