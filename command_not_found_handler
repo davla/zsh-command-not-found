@@ -11,15 +11,10 @@ ${ZSH_COMMAND_NOT_FOUND_IGNORE_INSTALLED:-true} \
 $ZSH_COMMAND_NOT_FOUND_DATA_DIR \
     && ZSH_COMMAND_NOT_FOUND_OPTIONS+=('-d' "$ZSH_COMMAND_NOT_FOUND_DATA_DIR")
 
-if $ZSH_COMMAND_NOT_FOUND_CHECK_EXEC; then
-    which &> /dev/null command-not-found \
-        && command_not_found_handler() {
-            which &> /dev/null command-not-found \
-                && command-not-found ${ZSH_COMMAND_NOT_FOUND_OPTIONS[@]} \
-                    -- ${1+"$1"}
-        }
+if $ZSH_COMMAND_NOT_FOUND_CHECK_EXEC \
+    && which &> /dev/null command-not-found; then
+        command-not-found ${ZSH_COMMAND_NOT_FOUND_OPTIONS[@]} \
+            -- ${1+"$1"}
 else
-    command_not_found_handler() {
-        command-not-found ${ZSH_COMMAND_NOT_FOUND_OPTIONS[@]} -- ${1+"$1"}
-    }
+    command-not-found ${ZSH_COMMAND_NOT_FOUND_OPTIONS[@]} -- ${1+"$1"}
 fi
